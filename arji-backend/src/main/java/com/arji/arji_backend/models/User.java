@@ -1,19 +1,22 @@
 package com.arji.arji_backend.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private Long id;
 
     @Column(name = "username")
@@ -22,10 +25,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "user_projects")
-    private List<Project> projects;
+    @ManyToMany(mappedBy = "personnel")
+    private Set<Project> projects;
 
-    @Column(name = "user_tickets")
-    private List<Ticket> tickets;
+    @ManyToMany(mappedBy = "assignedUsers")
+    private Set<Ticket> tickets;
 
 }

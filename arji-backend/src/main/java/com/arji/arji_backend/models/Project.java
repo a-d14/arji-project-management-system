@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -24,13 +25,15 @@ public class Project {
     @Column(name = "project_description")
     private String description;
 
-    @Column(name = "project_tickets")
-    private List<Ticket> tickets;
-
-    @Column(name = "project_manager")
-    private User manager;
-
-    @Column(name = "project_personnel")
+    @ManyToMany
+    @JoinTable(
+            name = "users_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> personnel;
+
+    @OneToMany(mappedBy = "project")
+    private Set<Ticket> tickets;
 
 }
