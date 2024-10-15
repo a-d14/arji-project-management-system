@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -43,12 +45,18 @@ public class Ticket {
     @Column(name = "ticket_progress")
     private TicketProgress ticketProgress;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "ticket_deadline")
+    private LocalDateTime deadline;
+
     @ManyToOne
-    @JoinColumn(name = "project_id")
+    @JoinColumn(name = "ticket_project_id")
     private Project project;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "ticket_assignee_id")
     private User assignee;
 
     @ManyToMany

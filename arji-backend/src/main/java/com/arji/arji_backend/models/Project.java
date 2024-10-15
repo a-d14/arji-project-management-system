@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "project_id")
-    private Long id;
+    private Long projectId;
 
     @Column(name = "project_name")
     private String title;
@@ -25,13 +26,28 @@ public class Project {
     @Column(name = "project_description")
     private String description;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "manager_id", referencedColumnName = "user_id")
+    private User manager;
+
     @ManyToMany
     @JoinTable(
             name = "users_projects",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> personnel;
+    private List<User> personnelReadOnly;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_projects_edit",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> personnelEditAccess;
 
     @OneToMany(mappedBy = "project")
     private Set<Ticket> tickets;
