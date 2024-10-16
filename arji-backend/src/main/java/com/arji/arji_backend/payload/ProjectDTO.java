@@ -1,5 +1,6 @@
 package com.arji.arji_backend.payload;
 
+import com.arji.arji_backend.models.Ticket;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,6 +24,7 @@ public class ProjectDTO {
     @Size(max = 500)
     private String description;
 
+    // TODO: Check if the user has manager role
     @NotNull
     private Long managerId;
 
@@ -30,5 +32,7 @@ public class ProjectDTO {
     // TODO: Same id should not be present in both lists
     private List<Long> personnelReadOnly;
     private List<Long> personnelEditAccess;
+
+    private List<Ticket> tickets;
 
 }

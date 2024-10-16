@@ -8,6 +8,7 @@ import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,11 +22,17 @@ public class ProjectServiceImpl implements ProjectService{
     UserRepository userRepository;
     ProjectRepository projectRepository;
 
-
+    @Autowired
     public ProjectServiceImpl(ModelMapper modelMapper, UserRepository userRepository, ProjectRepository projectRepository) {
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
+    }
+
+    @Override
+    public List<ProjectResponse> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
+        return projects.stream().map(project -> modelMapper.map(project, ProjectResponse.class)).toList();
     }
 
     @Transactional
@@ -69,5 +76,10 @@ public class ProjectServiceImpl implements ProjectService{
         projectResponse.setPersonnelEditAccess(project.getPersonnelEditAccess());
 
         return projectResponse;
+    }
+
+    @Override
+    public ProjectResponse editProject(ProjectDTO projectDTO) {
+
     }
 }

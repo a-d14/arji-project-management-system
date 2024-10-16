@@ -17,6 +17,7 @@ public class ProjectResponse {
     private String title;
     private String description;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private User manager;
     private List<User> personnelReadOnly;
     private List<User> personnelEditAccess;

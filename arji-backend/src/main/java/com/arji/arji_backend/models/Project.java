@@ -29,6 +29,9 @@ public class Project {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
     @ManyToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "user_id")
     private User manager;
@@ -50,6 +53,6 @@ public class Project {
     private List<User> personnelEditAccess;
 
     @OneToMany(mappedBy = "project")
-    private Set<Ticket> tickets;
+    private List<Ticket> tickets;
 
 }

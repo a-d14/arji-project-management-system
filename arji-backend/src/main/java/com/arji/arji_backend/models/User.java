@@ -53,6 +53,6 @@ public class User {
     private List<Project> projectsEditAccess;
 
     @ManyToMany(mappedBy = "assignedUsers")
-    private Set<Ticket> tickets;
+    private List<Ticket> tickets;
 
 }
