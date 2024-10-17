@@ -1,4 +1,4 @@
-package com.arji.arji_backend.payload;
+package com.arji.arji_backend.payload.project;
 
 import com.arji.arji_backend.models.Ticket;
 import jakarta.validation.constraints.NotBlank;

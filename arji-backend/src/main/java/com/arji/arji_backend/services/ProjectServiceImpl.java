@@ -2,7 +2,7 @@ package com.arji.arji_backend.services;
 
 import com.arji.arji_backend.models.Project;
 import com.arji.arji_backend.models.User;
-import com.arji.arji_backend.payload.ProjectDTO;
+import com.arji.arji_backend.payload.project.ProjectDTO;
 import com.arji.arji_backend.payload.ProjectResponse;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;

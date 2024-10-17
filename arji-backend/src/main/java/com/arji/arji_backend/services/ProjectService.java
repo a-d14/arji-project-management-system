@@ -1,6 +1,6 @@
 package com.arji.arji_backend.services;
 
-import com.arji.arji_backend.payload.ProjectDTO;
+import com.arji.arji_backend.payload.project.ProjectDTO;
 import com.arji.arji_backend.payload.ProjectResponse;
 
 import java.util.List;
