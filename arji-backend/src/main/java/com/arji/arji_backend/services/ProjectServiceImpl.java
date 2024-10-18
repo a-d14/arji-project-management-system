@@ -35,16 +35,25 @@ public class ProjectServiceImpl implements ProjectService{
         return projects.stream().map(project -> modelMapper.map(project, ProjectResponse.class)).toList();
     }
 
+    @Override
+    public ProjectResponse getProject(Long projectId) {
+
+        // TODO: Check if project with given id exists
+
+        return modelMapper.map(projectRepository.findById(projectId).get(), ProjectResponse.class);
+    }
+
     @Transactional
     @Override
     public ProjectResponse createProject(ProjectDTO projectDTO) throws Exception {
         Project project = modelMapper.map(projectDTO, Project.class);
 
-        // TODO: Handle case where user is not present
+        // TODO: Handle case where user is not present or does not have the manager role
 
         User manager = userRepository.findById(projectDTO.getManagerId()).orElseThrow(() -> new Exception("User Not Found"));
         project.setManager(manager);
 
+        // TODO: Make sure user exists and the manager is not in this list. Make sure same id not in both lists.
         List<User> personnelEditAccess = projectDTO.getPersonnelEditAccess().stream().map(id -> userRepository.findById(id).get()).toList();
         List<User> personnelReadOnly = projectDTO.getPersonnelReadOnly().stream().map(id -> userRepository.findById(id).get()).toList();
 
@@ -53,7 +62,6 @@ public class ProjectServiceImpl implements ProjectService{
 
         project.setCreatedAt(LocalDateTime.now());
 
-//        System.out.println("Project ID before save: " + project.getProjectId());
         Project savedProject = projectRepository.save(project);
 
         personnelEditAccess.forEach(user -> {
@@ -66,20 +74,23 @@ public class ProjectServiceImpl implements ProjectService{
             userRepository.save(user);
         });
 
-        ProjectResponse projectResponse = new ProjectResponse();
-        projectResponse.setId(project.getProjectId());
-        projectResponse.setTitle(project.getTitle());
-        projectResponse.setDescription(project.getDescription());
-        projectResponse.setCreatedAt(project.getCreatedAt());
-        projectResponse.setManager(project.getManager());
-        projectResponse.setPersonnelReadOnly(project.getPersonnelReadOnly());
-        projectResponse.setPersonnelEditAccess(project.getPersonnelEditAccess());
-
-        return projectResponse;
+        return modelMapper.map(savedProject, ProjectResponse.class);
     }
 
     @Override
-    public ProjectResponse editProject(ProjectDTO projectDTO) {
+    public ProjectResponse editProject(ProjectDTO projectDTO, Long projectId) {
+        // TODO: Make sure project exists.
+        Project project = projectRepository.findById(projectId).get();
+        project.setTitle(projectDTO.getTitle());
+        project.setDescription(projectDTO.getDescription());
+        project.setManager(userRepository.findById(projectDTO.getManagerId()).get());
+        project.setUpdatedAt(LocalDateTime.now());
+        projectRepository.save(project);
+        return modelMapper.map(project, ProjectResponse.class);
+    }
 
+    @Override
+    public void deleteProject(Long projectId) {
+        projectRepository.deleteById(projectId);
     }
 }

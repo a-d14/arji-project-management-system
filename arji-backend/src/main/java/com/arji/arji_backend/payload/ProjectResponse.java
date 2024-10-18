@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectResponse {
-
     private Long id;
     private String title;
     private String description;
@@ -21,5 +20,4 @@ public class ProjectResponse {
     private User manager;
     private List<User> personnelReadOnly;
     private List<User> personnelEditAccess;
-
 }

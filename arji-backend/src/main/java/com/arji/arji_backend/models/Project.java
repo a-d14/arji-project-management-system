@@ -1,13 +1,15 @@
 package com.arji.arji_backend.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -20,9 +22,12 @@ public class Project {
     @Column(name = "project_id")
     private Long projectId;
 
+    @NotBlank
     @Column(name = "project_name")
     private String title;
 
+    @NotBlank
+    @Size(max = 500)
     @Column(name = "project_description")
     private String description;
 
@@ -32,6 +37,7 @@ public class Project {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "user_id")
     private User manager;

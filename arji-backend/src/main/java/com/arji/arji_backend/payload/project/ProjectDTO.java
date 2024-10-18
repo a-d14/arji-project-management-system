@@ -14,25 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectDTO {
-
     private Long projectId;
-
-    @NotBlank
     private String title;
-
-    @NotBlank
-    @Size(max = 500)
     private String description;
-
-    // TODO: Check if the user has manager role
-    @NotNull
     private Long managerId;
-
-    // TODO: Make sure managerId is not included in either list
-    // TODO: Same id should not be present in both lists
     private List<Long> personnelReadOnly;
     private List<Long> personnelEditAccess;
-
     private List<Ticket> tickets;
-
 }
