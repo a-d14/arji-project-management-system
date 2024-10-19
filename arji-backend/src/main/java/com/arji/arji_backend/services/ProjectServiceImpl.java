@@ -1,14 +1,21 @@
 package com.arji.arji_backend.services;
 
+import com.arji.arji_backend.exceptions.APIException;
+import com.arji.arji_backend.exceptions.ResourceNotFoundException;
 import com.arji.arji_backend.models.Project;
 import com.arji.arji_backend.models.User;
 import com.arji.arji_backend.payload.project.ProjectDTO;
 import com.arji.arji_backend.payload.ProjectResponse;
+import com.arji.arji_backend.payload.project.ProjectListDTO;
+import com.arji.arji_backend.payload.project.ProjectListView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,32 +37,64 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public List<ProjectResponse> getAllProjects() {
-        List<Project> projects = projectRepository.findAll();
-        return projects.stream().map(project -> modelMapper.map(project, ProjectResponse.class)).toList();
+    public ProjectListDTO getAllProjects(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Project> projectPage = projectRepository.findAll(pageable);
+
+        List<Project> allProjects = projectPage.getContent();
+
+        List<ProjectListView> projects = allProjects.stream().map((project) -> modelMapper.map(project, ProjectListView.class)).toList();
+
+        ProjectListDTO projectListDTO = new ProjectListDTO();
+        projectListDTO.setProjects(projects);
+        projectListDTO.setPageNumber(projectPage.getNumber());
+        projectListDTO.setPageSize(projectPage.getSize());
+        projectListDTO.setTotalElements(projectPage.getTotalElements());
+        projectListDTO.setTotalPages(projectPage.getTotalPages());
+        projectListDTO.setLast(projectPage.isLast());
+
+        return projectListDTO;
     }
 
     @Override
     public ProjectResponse getProject(Long projectId) {
-
-        // TODO: Check if project with given id exists
-
-        return modelMapper.map(projectRepository.findById(projectId).get(), ProjectResponse.class);
+        return modelMapper.map(projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId)), ProjectResponse.class);
     }
 
     @Transactional
     @Override
-    public ProjectResponse createProject(ProjectDTO projectDTO) throws Exception {
+    public ProjectResponse createProject(ProjectDTO projectDTO) {
         Project project = modelMapper.map(projectDTO, Project.class);
 
-        // TODO: Handle case where user is not present or does not have the manager role
+        // TODO: Handle case where user does not have the manager role
 
-        User manager = userRepository.findById(projectDTO.getManagerId()).orElseThrow(() -> new Exception("User Not Found"));
+        User manager = userRepository.findById(projectDTO.getManagerId()).orElseThrow(() -> new ResourceNotFoundException("User", "id", projectDTO.getManagerId()));
         project.setManager(manager);
 
-        // TODO: Make sure user exists and the manager is not in this list. Make sure same id not in both lists.
-        List<User> personnelEditAccess = projectDTO.getPersonnelEditAccess().stream().map(id -> userRepository.findById(id).get()).toList();
-        List<User> personnelReadOnly = projectDTO.getPersonnelReadOnly().stream().map(id -> userRepository.findById(id).get()).toList();
+        List<User> personnelEditAccess = projectDTO.getPersonnelEditAccess().stream().map(userId -> {
+
+            if(projectDTO.getPersonnelReadOnly().contains(userId)) {
+                throw new APIException(String.format("Cannot put same userId:%s in personnelEditAccess and personnelReadOnly", userId));
+            }
+
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+
+            if(user.getId().equals(manager.getId())) {
+                throw new APIException("Manager cannot be in the personnelEditAccess list");
+            }
+
+            return user;
+        }).toList();
+
+        List<User> personnelReadOnly = projectDTO.getPersonnelReadOnly().stream().map(userId -> {
+            User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+
+            if(user.getId().equals(manager.getId())) {
+                throw new APIException("Manager cannot be in the personnelReadOnly list");
+            }
+
+            return user;
+        }).toList();
 
         project.setPersonnelEditAccess(personnelEditAccess);
         project.setPersonnelReadOnly(personnelReadOnly);
@@ -79,11 +118,19 @@ public class ProjectServiceImpl implements ProjectService{
 
     @Override
     public ProjectResponse editProject(ProjectDTO projectDTO, Long projectId) {
-        // TODO: Make sure project exists.
-        Project project = projectRepository.findById(projectId).get();
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
+
         project.setTitle(projectDTO.getTitle());
         project.setDescription(projectDTO.getDescription());
-        project.setManager(userRepository.findById(projectDTO.getManagerId()).get());
+
+        Long managerId = projectDTO.getManagerId();
+
+        if(managerId == null) {
+            project.setManager(null);
+        } else {
+            project.setManager(userRepository.findById(projectDTO.getManagerId()).orElse(null));
+        }
+
         project.setUpdatedAt(LocalDateTime.now());
         projectRepository.save(project);
         return modelMapper.map(project, ProjectResponse.class);

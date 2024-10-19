@@ -1,7 +1,7 @@
 package com.arji.arji_backend.controllers;
-
 import com.arji.arji_backend.payload.project.ProjectDTO;
 import com.arji.arji_backend.payload.ProjectResponse;
+import com.arji.arji_backend.payload.project.ProjectListDTO;
 import com.arji.arji_backend.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,11 @@ public class ProjectController {
     }
 
     @GetMapping("/auth/project")
-    public ResponseEntity<List<ProjectResponse>> getAllProjects() {
-        return new ResponseEntity<>(projectService.getAllProjects(), HttpStatus.OK);
+    public ResponseEntity<ProjectListDTO> getAllProjects(
+            @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
+            @RequestParam(name = "pageSize", defaultValue = "2") int pageSize
+    ) {
+        return new ResponseEntity<>(projectService.getAllProjects(pageNumber, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/auth/project/{projectId}")
@@ -32,13 +35,13 @@ public class ProjectController {
     }
 
     @PostMapping("/auth/project")
-    public ResponseEntity<ProjectResponse> createProject(@RequestBody ProjectDTO projectDTO) throws Exception {
+    public ResponseEntity<ProjectResponse> createProject(@RequestBody ProjectDTO projectDTO) {
         ProjectResponse projectResponse = projectService.createProject(projectDTO);
         return new ResponseEntity<>(projectResponse, HttpStatus.CREATED);
     }
 
     @PutMapping("/auth/project/{projectId}")
-    public ResponseEntity<ProjectResponse> editProject(@RequestBody ProjectDTO projectDTO, @PathVariable Long projectId) throws Exception {
+    public ResponseEntity<ProjectResponse> editProject(@RequestBody ProjectDTO projectDTO, @PathVariable Long projectId) {
         ProjectResponse projectResponse = projectService.editProject(projectDTO, projectId);
         return new ResponseEntity<>(projectResponse, HttpStatus.OK);
     }

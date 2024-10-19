@@ -2,14 +2,12 @@ package com.arji.arji_backend.services;
 
 import com.arji.arji_backend.payload.project.ProjectDTO;
 import com.arji.arji_backend.payload.ProjectResponse;
-
-import java.util.List;
+import com.arji.arji_backend.payload.project.ProjectListDTO;
 
 public interface ProjectService {
-    List<ProjectResponse> getAllProjects();
+    ProjectListDTO getAllProjects(int pageNumber, int pageSize);
     ProjectResponse getProject(Long projectId);
-    ProjectResponse createProject(ProjectDTO projectDTO) throws Exception;
+    ProjectResponse createProject(ProjectDTO projectDTO);
     ProjectResponse editProject(ProjectDTO projectDTO, Long projectId);
-
     void deleteProject(Long projectId);
 }

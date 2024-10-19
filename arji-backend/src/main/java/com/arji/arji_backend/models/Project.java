@@ -37,7 +37,6 @@ public class Project {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "manager_id", referencedColumnName = "user_id")
     private User manager;
