@@ -1,4 +1,4 @@
-package com.arji.arji_backend.payload;
+package com.arji.arji_backend.payload.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

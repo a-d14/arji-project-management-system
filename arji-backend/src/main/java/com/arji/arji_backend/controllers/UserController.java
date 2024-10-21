@@ -1,7 +1,8 @@
 package com.arji.arji_backend.controllers;
 
 import com.arji.arji_backend.models.User;
-import com.arji.arji_backend.payload.UserDTO;
+import com.arji.arji_backend.payload.user.UserDTO;
+import com.arji.arji_backend.payload.user.UserDetailsView;
 import com.arji.arji_backend.services.UserService;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
@@ -28,6 +29,11 @@ public class UserController {
     @GetMapping("/user")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserDetailsView> getUser(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
     // TODO: Need to add endpoint to get current user after logging in

@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectServiceImpl implements ProjectService{
@@ -71,7 +73,7 @@ public class ProjectServiceImpl implements ProjectService{
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setManager(
-                new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
+                project.getManager() == null ? null : new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
         );
         projectDetailsView.setPersonnelReadOnly(
                 project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
@@ -92,7 +94,7 @@ public class ProjectServiceImpl implements ProjectService{
         User manager = userRepository.findById(projectDTO.getManagerId()).orElseThrow(() -> new ResourceNotFoundException("User", "id", projectDTO.getManagerId()));
         project.setManager(manager);
 
-        List<User> personnelEditAccess = projectDTO.getPersonnelEditAccess().stream().map(userId -> {
+        Set<User> personnelEditAccess = projectDTO.getPersonnelEditAccess().stream().map(userId -> {
 
             if(projectDTO.getPersonnelReadOnly().contains(userId)) {
                 throw new APIException(String.format("Cannot put same userId:%s in personnelEditAccess and personnelReadOnly", userId));
@@ -105,9 +107,9 @@ public class ProjectServiceImpl implements ProjectService{
             }
 
             return user;
-        }).toList();
+        }).collect(Collectors.toSet());
 
-        List<User> personnelReadOnly = projectDTO.getPersonnelReadOnly().stream().map(userId -> {
+        Set<User> personnelReadOnly = projectDTO.getPersonnelReadOnly().stream().map(userId -> {
             User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
 
             if(user.getId().equals(manager.getId())) {
@@ -115,7 +117,7 @@ public class ProjectServiceImpl implements ProjectService{
             }
 
             return user;
-        }).toList();
+        }).collect(Collectors.toSet());
 
         project.setPersonnelEditAccess(personnelEditAccess);
         project.setPersonnelReadOnly(personnelReadOnly);
@@ -165,7 +167,7 @@ public class ProjectServiceImpl implements ProjectService{
 
         project.setUpdatedAt(LocalDateTime.now());
 
-        List<User> personnelEditAccess = project.getPersonnelEditAccess();
+        Set<User> personnelEditAccess = project.getPersonnelEditAccess();
         project.setPersonnelEditAccess(projectDTO.getPersonnelEditAccess().stream().map(
                 userId -> {
                     if(projectDTO.getPersonnelReadOnly().contains(userId)) {
@@ -173,15 +175,37 @@ public class ProjectServiceImpl implements ProjectService{
                     }
                     return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
                 }
-        ).toList());
+        ).collect(Collectors.toSet()));
 
-        List<User> personnelReadOnly = project.getPersonnelReadOnly();
+        Set<User> personnelReadOnly = project.getPersonnelReadOnly();
         project.setPersonnelReadOnly(projectDTO.getPersonnelReadOnly().stream().map(
                 userId -> userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId))
-        ).toList());
-
+        ).collect(Collectors.toSet()));
         projectRepository.save(project);
-        return modelMapper.map(project, ProjectDetailsView.class);
+
+        Set<User> personnelEditAccessNew = project.getPersonnelEditAccess();
+        Set<User> personnelReadOnlyNew = project.getPersonnelReadOnly();
+
+        personnelEditAccess.removeAll(personnelEditAccessNew);
+        personnelReadOnly.removeAll(personnelReadOnlyNew);
+
+        personnelEditAccess.forEach(user -> {
+            user.getProjectsEditAccess().remove(project);
+            userRepository.save(user);
+        });
+
+        personnelReadOnly.forEach(user -> {
+            user.getProjectsReadOnly().remove(project);
+            userRepository.save(user);
+        });
+
+        ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
+        projectDetailsView.setPersonnelEditAccess(personnelEditAccessNew.stream()
+                .map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
+        projectDetailsView.setPersonnelReadOnly(personnelReadOnlyNew.stream()
+                .map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
+
+        return projectDetailsView;
     }
 
     @Override
