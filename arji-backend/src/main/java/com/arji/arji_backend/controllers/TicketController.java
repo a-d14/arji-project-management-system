@@ -11,7 +11,12 @@ import java.util.List;
 public class TicketController {
 
     @PostMapping("/auth/{projectId}/ticket")
-    public ResponseEntity<Ticket> createTicket(@PathVariable("projectId") Long projectId) {
+    public ResponseEntity<Ticket> createTicketForProject(@PathVariable("projectId") Long projectId) {
+        return null;
+    }
+
+    @PostMapping("/auth/ticket")
+    public ResponseEntity<Ticket> createTicket() {
         return null;
     }
 

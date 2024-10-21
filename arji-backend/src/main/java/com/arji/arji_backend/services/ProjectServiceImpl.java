@@ -5,11 +5,12 @@ import com.arji.arji_backend.exceptions.ResourceNotFoundException;
 import com.arji.arji_backend.models.Project;
 import com.arji.arji_backend.models.User;
 import com.arji.arji_backend.payload.project.ProjectDTO;
-import com.arji.arji_backend.payload.ProjectResponse;
+import com.arji.arji_backend.payload.project.ProjectDetailsView;
 import com.arji.arji_backend.payload.project.ProjectListDTO;
 import com.arji.arji_backend.payload.project.ProjectListView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;
+import com.arji.arji_backend.util.UserDetails;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,11 @@ public class ProjectServiceImpl implements ProjectService{
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
+
+        modelMapper.typeMap(Project.class, ProjectDetailsView.class).addMappings(mapper -> {
+            mapper.skip(ProjectDetailsView::setPersonnelReadOnly);
+            mapper.skip(ProjectDetailsView::setPersonnelEditAccess);
+        });
     }
 
     @Override
@@ -43,7 +49,11 @@ public class ProjectServiceImpl implements ProjectService{
 
         List<Project> allProjects = projectPage.getContent();
 
-        List<ProjectListView> projects = allProjects.stream().map((project) -> modelMapper.map(project, ProjectListView.class)).toList();
+        List<ProjectListView> projects = allProjects.stream().map((project) -> {
+            ProjectListView projectListView = modelMapper.map(project, ProjectListView.class);
+            projectListView.setManagerDetails(new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName()));
+            return projectListView;
+        }).toList();
 
         ProjectListDTO projectListDTO = new ProjectListDTO();
         projectListDTO.setProjects(projects);
@@ -57,13 +67,24 @@ public class ProjectServiceImpl implements ProjectService{
     }
 
     @Override
-    public ProjectResponse getProject(Long projectId) {
-        return modelMapper.map(projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId)), ProjectResponse.class);
+    public ProjectDetailsView getProject(Long projectId) {
+        Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
+        ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
+        projectDetailsView.setManager(
+                new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
+        );
+        projectDetailsView.setPersonnelReadOnly(
+                project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+        );
+        projectDetailsView.setPersonnelEditAccess(
+                project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+        );
+        return projectDetailsView;
     }
 
     @Transactional
     @Override
-    public ProjectResponse createProject(ProjectDTO projectDTO) {
+    public ProjectDetailsView createProject(ProjectDTO projectDTO) {
         Project project = modelMapper.map(projectDTO, Project.class);
 
         // TODO: Handle case where user does not have the manager role
@@ -113,11 +134,22 @@ public class ProjectServiceImpl implements ProjectService{
             userRepository.save(user);
         });
 
-        return modelMapper.map(savedProject, ProjectResponse.class);
+        ProjectDetailsView projectDetailsView = modelMapper.map(savedProject, ProjectDetailsView.class);
+        projectDetailsView.setManager(
+                new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
+        );
+        projectDetailsView.setPersonnelReadOnly(
+                project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+        );
+        projectDetailsView.setPersonnelEditAccess(
+                project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+        );
+        return projectDetailsView;
     }
 
+    @Transactional
     @Override
-    public ProjectResponse editProject(ProjectDTO projectDTO, Long projectId) {
+    public ProjectDetailsView editProject(ProjectDTO projectDTO, Long projectId) {
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
 
         project.setTitle(projectDTO.getTitle());
@@ -132,8 +164,24 @@ public class ProjectServiceImpl implements ProjectService{
         }
 
         project.setUpdatedAt(LocalDateTime.now());
+
+        List<User> personnelEditAccess = project.getPersonnelEditAccess();
+        project.setPersonnelEditAccess(projectDTO.getPersonnelEditAccess().stream().map(
+                userId -> {
+                    if(projectDTO.getPersonnelReadOnly().contains(userId)) {
+                        throw new APIException(String.format("Cannot put same userId:%s in personnelEditAccess and personnelReadOnly", userId));
+                    }
+                    return userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+                }
+        ).toList());
+
+        List<User> personnelReadOnly = project.getPersonnelReadOnly();
+        project.setPersonnelReadOnly(projectDTO.getPersonnelReadOnly().stream().map(
+                userId -> userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId))
+        ).toList());
+
         projectRepository.save(project);
-        return modelMapper.map(project, ProjectResponse.class);
+        return modelMapper.map(project, ProjectDetailsView.class);
     }
 
     @Override
