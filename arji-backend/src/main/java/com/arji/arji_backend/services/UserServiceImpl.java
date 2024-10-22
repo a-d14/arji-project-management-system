@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void createUser(UserDTO userDTO) {
 
-        // TODO: Check if user with given id already exists
+        // TODO: Check if user with given username already exists
 
         User user = modelMapper.map(userDTO, User.class);
         user.setCreatedAt(LocalDateTime.now());

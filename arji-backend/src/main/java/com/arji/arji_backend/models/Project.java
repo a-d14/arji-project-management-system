@@ -40,12 +40,12 @@ public class Project {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "manager_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "manager_id")
     private User manager;
 
     @ManyToMany
     @JoinTable(
-            name = "users_projects",
+            name = "users_projects_read_only",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
@@ -59,8 +59,18 @@ public class Project {
     )
     private Set<User> personnelEditAccess;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
     private Set<Ticket> tickets;
+
+    public void addTicket(Ticket ticket) {
+        ticket.setProject(this);
+        this.tickets.add(ticket);
+    }
+
+    public void removeTicket(Ticket ticket) {
+        this.tickets.remove(ticket);
+        ticket.setProject(null);
+    }
 
     @Override
     public final boolean equals(Object o) {

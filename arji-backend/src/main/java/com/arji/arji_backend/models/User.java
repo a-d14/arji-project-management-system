@@ -44,8 +44,6 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // TODO: Change later to Set
-
     @ManyToMany(mappedBy = "personnelReadOnly")
     @JsonIgnore
     private Set<Project> projectsReadOnly;
@@ -54,8 +52,13 @@ public class User {
     @JsonIgnore
     private Set<Project> projectsEditAccess;
 
-    @ManyToMany(mappedBy = "assignedUsers")
+    @OneToMany(mappedBy = "assignedUser")
     private Set<Ticket> tickets;
+
+    public void addTicket(Ticket ticket) {
+        tickets.add(ticket);
+        ticket.setAssignedUser(this);
+    }
 
     @Override
     public final boolean equals(Object o) {
