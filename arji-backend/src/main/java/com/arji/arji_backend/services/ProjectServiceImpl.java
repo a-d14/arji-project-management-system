@@ -123,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService{
         project.setPersonnelReadOnly(personnelReadOnly);
 
         project.setCreatedAt(LocalDateTime.now());
-        
+
         projectRepository.save(project);
 
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);

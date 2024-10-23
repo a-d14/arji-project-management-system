@@ -6,6 +6,7 @@ import com.arji.arji_backend.models.Project;
 import com.arji.arji_backend.models.Ticket;
 import com.arji.arji_backend.models.User;
 import com.arji.arji_backend.payload.ticket.TicketDTO;
+import com.arji.arji_backend.payload.ticket.TicketDetailsView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.TicketRepository;
 import com.arji.arji_backend.repositories.UserRepository;
@@ -67,5 +68,11 @@ public class TicketServiceImpl implements TicketService {
         if(parent != null)
             parent.addChild(ticket);
 
+    }
+
+    @Override
+    public List<TicketDetailsView> getAllTickets() {
+        List<Ticket> allTickets = ticketRepository.findAll();
+        return null;
     }
 }
