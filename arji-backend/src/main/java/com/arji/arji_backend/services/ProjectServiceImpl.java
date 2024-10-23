@@ -123,28 +123,18 @@ public class ProjectServiceImpl implements ProjectService{
         project.setPersonnelReadOnly(personnelReadOnly);
 
         project.setCreatedAt(LocalDateTime.now());
+        
+        projectRepository.save(project);
 
-        Project savedProject = projectRepository.save(project);
-
-//        personnelEditAccess.forEach(user -> {
-//            user.getProjectsEditAccess().add(project);
-//            userRepository.save(user);
-//        });
-//
-//        personnelReadOnly.forEach(user -> {
-//            user.getProjectsReadOnly().add(project);
-//            userRepository.save(user);
-//        });
-
-        ProjectDetailsView projectDetailsView = modelMapper.map(savedProject, ProjectDetailsView.class);
+        ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setManager(
-                new UserDetails(savedProject.getManager().getId(), savedProject.getManager().getFirstName() + " " + savedProject.getManager().getLastName())
+                new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
         );
         projectDetailsView.setPersonnelReadOnly(
-                savedProject.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         projectDetailsView.setPersonnelEditAccess(
-                savedProject.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         return projectDetailsView;
     }
@@ -181,23 +171,12 @@ public class ProjectServiceImpl implements ProjectService{
         project.setPersonnelReadOnly(projectDTO.getPersonnelReadOnly().stream().map(
                 userId -> userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "id", userId))
         ).collect(Collectors.toSet()));
-//        projectRepository.save(project);
 
         Set<User> personnelEditAccessNew = project.getPersonnelEditAccess();
         Set<User> personnelReadOnlyNew = project.getPersonnelReadOnly();
 
         personnelEditAccess.removeAll(personnelEditAccessNew);
         personnelReadOnly.removeAll(personnelReadOnlyNew);
-
-//        personnelEditAccess.forEach(user -> {
-//            user.getProjectsEditAccess().remove(project);
-//            userRepository.save(user);
-//        });
-//
-//        personnelReadOnly.forEach(user -> {
-//            user.getProjectsReadOnly().remove(project);
-//            userRepository.save(user);
-//        });
 
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setPersonnelEditAccess(personnelEditAccessNew.stream()
