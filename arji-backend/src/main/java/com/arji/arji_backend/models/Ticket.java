@@ -69,6 +69,9 @@ public class Ticket {
     @JoinColumn(name = "assigned_user_id")
     private User assignedUser;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    Set<Comment> comments;
+
     public void addChild(Ticket ticket) {
         this.getChildren().add(ticket);
         ticket.setParent(this);
