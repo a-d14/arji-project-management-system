@@ -10,6 +10,7 @@ import com.arji.arji_backend.payload.ticket.TicketDetailsView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.TicketRepository;
 import com.arji.arji_backend.repositories.UserRepository;
+import com.arji.arji_backend.util.ProjectDetails;
 import com.arji.arji_backend.util.TicketDetails;
 import com.arji.arji_backend.util.UserDetails;
 import jakarta.transaction.Transactional;
@@ -90,10 +91,10 @@ public class TicketServiceImpl implements TicketService {
         ticketDetailsView.setParent(ticket.getParent() != null ? new TicketDetails(ticket.getParent().getTicketId(), ticket.getParent().getTitle()) : null);
         ticketDetailsView.setReporter(new UserDetails(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
         ticketDetailsView.setAssignedUser(new UserDetails(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
-
-        ticket.getChildren().forEach((t) -> {
-            ticketDetailsView.getChildren().add(new TicketDetails(t.getTicketId(), t.getTitle()));
-        });
+        ticketDetailsView.setProject(new ProjectDetails(ticket.getProject().getProjectId(), ticket.getProject().getTitle()));
+        ticketDetailsView.setChildren(
+                ticket.getChildren().stream().map(t -> new TicketDetails(t.getTicketId(), t.getTitle())).toList()
+        );
 
         return ticketDetailsView;
     }
