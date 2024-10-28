@@ -1,5 +1,6 @@
 package com.arji.arji_backend.payload.project;
 
+import com.arji.arji_backend.util.TicketDetails;
 import com.arji.arji_backend.util.UserDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class ProjectDetailsView {
     private UserDetails manager;
     private List<UserDetails> personnelReadOnly;
     private List<UserDetails> personnelEditAccess;
+    private List<TicketDetails> tickets;
 }

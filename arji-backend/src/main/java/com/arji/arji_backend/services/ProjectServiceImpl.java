@@ -10,6 +10,7 @@ import com.arji.arji_backend.payload.project.ProjectListDTO;
 import com.arji.arji_backend.payload.project.ProjectListView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;
+import com.arji.arji_backend.util.TicketDetails;
 import com.arji.arji_backend.util.UserDetails;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -41,6 +42,7 @@ public class ProjectServiceImpl implements ProjectService{
         modelMapper.typeMap(Project.class, ProjectDetailsView.class).addMappings(mapper -> {
             mapper.skip(ProjectDetailsView::setPersonnelReadOnly);
             mapper.skip(ProjectDetailsView::setPersonnelEditAccess);
+            mapper.skip(ProjectDetailsView::setTickets);
         });
     }
 
@@ -80,6 +82,9 @@ public class ProjectServiceImpl implements ProjectService{
         );
         projectDetailsView.setPersonnelEditAccess(
                 project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+        );
+        projectDetailsView.setTickets(
+                project.getTickets().stream().map(ticket -> new TicketDetails(ticket.getTicketId(), ticket.getTitle())).toList()
         );
         return projectDetailsView;
     }
