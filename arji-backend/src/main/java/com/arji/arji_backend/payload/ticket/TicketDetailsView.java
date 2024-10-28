@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -16,13 +17,13 @@ public class TicketDetailsView {
     private String title;
     private String description;
     TicketDetails parent;
-    private Set<TicketDetails> children;
+    private List<TicketDetails> children;
     private TicketLabel ticketLabel;
     private TicketPriority ticketPriority;
     private TicketProgress ticketProgress;
     private LocalDateTime createdAt;
     private LocalDateTime deadline;
     private ProjectDetails project;
-    private UserDetails user;
+    private UserDetails reporter;
     private UserDetails assignedUser;
 }

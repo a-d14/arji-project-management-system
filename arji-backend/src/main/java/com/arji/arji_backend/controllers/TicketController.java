@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api")
 public class TicketController {
 
-    @Autowired
     private TicketService ticketService;
+
+    @Autowired
+    public TicketController(TicketService ticketService) {
+        this.ticketService = ticketService;
+    }
 
     @PostMapping("/auth/ticket")
     public ResponseEntity<String> createTicket(@RequestBody TicketDTO ticketDTO) {
@@ -29,13 +33,21 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
     }
 
+    @GetMapping("/auth/ticket/{ticketId}")
+    public ResponseEntity<TicketDetailsView> getTicket(@PathVariable Long ticketId) {
+        return new ResponseEntity<>(ticketService.getTicket(ticketId), HttpStatus.OK);
+    }
+
     @PostMapping("/auth/{projectId}/ticket")
-    public ResponseEntity<Ticket> createTicketForProject(@PathVariable("projectId") Long projectId) {
-        return null;
+    public ResponseEntity<String> addNewTicketToProject(@PathVariable("projectId") Long projectId, @RequestBody TicketDTO ticketDTO) {
+        ticketDTO.setProjectId(projectId);
+        ticketService.createTicket(ticketDTO);
+        return new ResponseEntity<>("Ticket Created", HttpStatus.OK);
     }
 
     @GetMapping("/auth/{projectId}/ticket")
     public ResponseEntity<List<Ticket>> getAllTicketsForProject(@PathVariable("projectId") Long projectId) {
+        ticketService.findTicketsByProject(projectId);
         return null;
     }
 

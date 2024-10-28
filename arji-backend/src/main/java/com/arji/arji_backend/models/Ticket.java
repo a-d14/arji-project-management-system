@@ -69,7 +69,7 @@ public class Ticket {
     @JoinColumn(name = "assigned_user_id")
     private User assignedUser;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL)
     Set<Comment> comments;
 
     public void addChild(Ticket ticket) {

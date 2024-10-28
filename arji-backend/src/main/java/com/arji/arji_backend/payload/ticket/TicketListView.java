@@ -15,7 +15,7 @@ public class TicketListView {
     private Long ticketId;
     private String title;
     private ProjectDetails projectDetails;
+    private LocalDateTime createdAt;
     private LocalDateTime deadline;
     private UserDetails assignedUser;
-
 }

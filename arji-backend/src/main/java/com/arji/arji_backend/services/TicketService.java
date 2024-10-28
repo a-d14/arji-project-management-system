@@ -8,4 +8,6 @@ import java.util.List;
 public interface TicketService {
     void createTicket(TicketDTO ticketDTO);
     List<TicketDetailsView> getAllTickets();
+    TicketDetailsView getTicket(Long ticketId);
+    void findTicketsByProject(Long projectId);
 }

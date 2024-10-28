@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,9 +20,8 @@ public class TicketDTO {
     private TicketLabel ticketLabel;
     private TicketPriority ticketPriority;
     private TicketProgress ticketProgress;
+    private String deadline;
     private Long reporterId;
     private Long assignedUserId;
     private Long projectId;
-
-
 }
