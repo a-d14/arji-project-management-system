@@ -60,6 +60,11 @@ public class User {
         ticket.setAssignedUser(this);
     }
 
+    public void removeTicket(Ticket ticket) {
+        tickets.remove(ticket);
+        ticket.setAssignedUser(null);
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

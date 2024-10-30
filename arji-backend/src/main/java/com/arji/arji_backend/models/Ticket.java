@@ -4,6 +4,7 @@ import com.arji.arji_backend.util.TicketLabel;
 import com.arji.arji_backend.util.TicketPriority;
 import com.arji.arji_backend.util.TicketProgress;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,6 +58,7 @@ public class Ticket {
     @Column(name = "ticket_deadline")
     private LocalDateTime deadline;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "ticket_project_id")
     private Project project;
@@ -75,6 +77,11 @@ public class Ticket {
     public void addChild(Ticket ticket) {
         this.getChildren().add(ticket);
         ticket.setParent(this);
+    }
+
+    public void removeChild(Ticket ticket) {
+        this.children.remove(ticket);
+        ticket.setParent(null);
     }
 
     @Override

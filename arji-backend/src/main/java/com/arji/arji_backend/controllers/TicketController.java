@@ -28,6 +28,13 @@ public class TicketController {
         return new ResponseEntity<>("Ticket Created", HttpStatus.OK);
     }
 
+    @PostMapping("/auth/{projectId}/ticket")
+    public ResponseEntity<String> addNewTicketToProject(@PathVariable("projectId") Long projectId, @RequestBody TicketDTO ticketDTO) {
+        ticketDTO.setProjectId(projectId);
+        ticketService.createTicket(ticketDTO);
+        return new ResponseEntity<>("Ticket Created", HttpStatus.OK);
+    }
+
     @GetMapping("/auth/ticket")
     public ResponseEntity<List<TicketDetailsView>> getAllTickets() {
         return new ResponseEntity<>(ticketService.getAllTickets(), HttpStatus.OK);
@@ -38,17 +45,15 @@ public class TicketController {
         return new ResponseEntity<>(ticketService.getTicket(ticketId), HttpStatus.OK);
     }
 
-    @PostMapping("/auth/{projectId}/ticket")
-    public ResponseEntity<String> addNewTicketToProject(@PathVariable("projectId") Long projectId, @RequestBody TicketDTO ticketDTO) {
-        ticketDTO.setProjectId(projectId);
-        ticketService.createTicket(ticketDTO);
-        return new ResponseEntity<>("Ticket Created", HttpStatus.OK);
-    }
-
     @GetMapping("/auth/{projectId}/ticket")
     public ResponseEntity<List<Ticket>> getAllTicketsForProject(@PathVariable("projectId") Long projectId) {
         ticketService.findTicketsByProject(projectId);
         return null;
+    }
+
+    @PutMapping("/auth/ticket/{ticketId}")
+    public ResponseEntity<TicketDetailsView> editTicket(@PathVariable("ticketId") Long ticketId, @RequestBody TicketDTO ticketDTO) {
+        return new ResponseEntity<>(ticketService.editTicket(ticketId, ticketDTO), HttpStatus.OK);
     }
 
 }

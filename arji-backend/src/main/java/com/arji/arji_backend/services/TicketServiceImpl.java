@@ -7,6 +7,7 @@ import com.arji.arji_backend.models.Ticket;
 import com.arji.arji_backend.models.User;
 import com.arji.arji_backend.payload.ticket.TicketDTO;
 import com.arji.arji_backend.payload.ticket.TicketDetailsView;
+import com.arji.arji_backend.payload.ticket.TicketListDTO;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.TicketRepository;
 import com.arji.arji_backend.repositories.UserRepository;
@@ -54,6 +55,10 @@ public class TicketServiceImpl implements TicketService {
         User assignedUser = userRepository.findById(ticketDTO.getAssignedUserId()).orElseThrow(() -> new ResourceNotFoundException("User", "userId", ticketDTO.getReporterId()));
         ticket.setReporter(reporter);
         ticket.setCreatedAt(LocalDateTime.now());
+
+        if(LocalDateTime.parse(ticketDTO.getDeadline()).isBefore(LocalDateTime.now()))
+            throw new APIException("Deadline cannot be before the current date");
+
         ticket.setDeadline(LocalDateTime.parse(ticketDTO.getDeadline()));
         assignedUser.addTicket(ticket);
 
@@ -100,9 +105,72 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public void findTicketsByProject(Long projectId) {
+    public TicketListDTO findTicketsByProject(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
-        return;
+        return null;
+    }
+
+    @Transactional
+    @Override
+    public TicketDetailsView editTicket(Long ticketId, TicketDTO ticketDTO) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket", "ticketId", ticketId));
+
+        ticket.setTitle(ticketDTO.getTitle());
+        ticket.setDescription(ticketDTO.getDescription());
+        ticket.setTicketLabel(ticketDTO.getTicketLabel());
+        ticket.setTicketPriority(ticketDTO.getTicketPriority());
+        ticket.setTicketProgress(ticketDTO.getTicketProgress());
+
+        if(!ticket.getDeadline().equals(LocalDateTime.parse(ticketDTO.getDeadline()))
+                && LocalDateTime.parse(ticketDTO.getDeadline()).isBefore(LocalDateTime.now()))
+            throw new APIException("Deadline cannot be before the current date");
+
+        ticket.setDeadline(LocalDateTime.parse(ticketDTO.getDeadline()));
+
+        if(ticketDTO.getProjectId() == null)
+            throw new APIException("Project ID must be provided");
+
+        Project newProject = projectRepository.findById(ticketDTO.getProjectId())
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", ticketDTO.getProjectId()));
+
+        Ticket newParentTicket = ticketDTO.getParentTicketId() == null ? null :
+                ticketRepository.findById(ticketDTO.getParentTicketId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Parent Ticket", "ticketId", ticketDTO.getParentTicketId()));
+
+        if(newParentTicket != null && !newProject.getTickets().contains(newParentTicket))
+            throw new APIException("Parent Ticket must belong to the supplied project");
+
+        ticket.getProject().removeTicket(ticket);
+        ticket.setProject(newProject);
+
+        if(ticket.getParent() != null) {
+            ticket.getParent().removeChild(ticket);
+        }
+
+        ticket.setParent(newParentTicket);
+
+        User newAssignedUser = userRepository.findById(ticketDTO.getAssignedUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("Assigned user", "userId", ticketDTO.getAssignedUserId()));
+
+        ticket.getAssignedUser().removeTicket(ticket);
+        ticket.setAssignedUser(newAssignedUser);
+
+        ticket.getChildren().forEach((child) -> {
+            child.getProject().removeTicket(child);
+            child.setProject(newProject);
+        });
+
+        TicketDetailsView ticketDetailsView = modelMapper.map(ticket, TicketDetailsView.class);
+        ticketDetailsView.setParent(ticket.getParent() != null ? new TicketDetails(ticket.getParent().getTicketId(), ticket.getParent().getTitle()) : null);
+        ticketDetailsView.setReporter(new UserDetails(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
+        ticketDetailsView.setAssignedUser(new UserDetails(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
+        ticketDetailsView.setProject(new ProjectDetails(ticket.getProject().getProjectId(), ticket.getProject().getTitle()));
+        ticketDetailsView.setChildren(
+                ticket.getChildren().stream().map(t -> new TicketDetails(t.getTicketId(), t.getTitle())).toList()
+        );
+
+        return ticketDetailsView;
     }
 }
