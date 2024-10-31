@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "ffbc804b-3d50-4efe-8f01-6477b8285451",
 		"name": "Arji-Backend",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "11965706"
 	},
 	"item": [
@@ -23,19 +23,7 @@
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/auth/user",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"auth",
-								"user"
-							]
-						}
+						"url": "http://localhost:8080/api/auth/user"
 					},
 					"response": []
 				},
@@ -44,19 +32,16 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": {
-							"raw": "http://localhost:8080/api/auth/user",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"auth",
-								"user"
-							]
-						}
+						"url": "http://localhost:8080/api/auth/user"
+					},
+					"response": []
+				},
+				{
+					"name": "0103-Get User By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/auth/user/2"
 					},
 					"response": []
 				}
@@ -72,26 +57,14 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"Project 2\",\n    \"description\": \"New Project 2\",\n    \"managerId\": 1,\n    \"personnelReadOnly\": [3],\n    \"personnelEditAccess\": [\n        2,\n        4\n    ]\n}",
+							"raw": "{\n    \"title\": \"Project 3\",\n    \"description\": \"New Project\",\n    \"managerId\": 1,\n    \"personnelReadOnly\": [2],\n    \"personnelEditAccess\": [\n        3,\n        4\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/auth/project",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"auth",
-								"project"
-							]
-						}
+						"url": "http://localhost:8080/api/auth/project"
 					},
 					"response": []
 				},
@@ -101,7 +74,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/api/auth/project",
+							"raw": "http://localhost:8080/api/auth/project?pageNumber=0&pageSize=3",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -111,6 +84,16 @@
 								"api",
 								"auth",
 								"project"
+							],
+							"query": [
+								{
+									"key": "pageNumber",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "3"
+								}
 							]
 						}
 					},
@@ -122,13 +105,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/auth/project/:projectId",
+							"raw": "http://localhost:8080/api/auth/project/:projectId",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"api",
 								"auth",
 								"project",
 								":projectId"
@@ -136,7 +120,7 @@
 							"variable": [
 								{
 									"key": "projectId",
-									"value": ""
+									"value": "1"
 								}
 							]
 						}
@@ -148,14 +132,24 @@
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Project 1\",\n    \"description\": \"New Project 2\",\n    \"managerId\": 1,\n    \"personnelReadOnly\": [3],\n    \"personnelEditAccess\": [\n        2,\n        4\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/auth/project/:projectId",
+							"raw": "http://localhost:8080/api/auth/project/:projectId",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"api",
 								"auth",
 								"project",
 								":projectId"
@@ -163,7 +157,35 @@
 							"variable": [
 								{
 									"key": "projectId",
-									"value": ""
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "0205-Delete Project",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/auth/project/:projectId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"project",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "1"
 								}
 							]
 						}
@@ -180,23 +202,41 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Ticket\",\n    \"description\": \"A Ticket\",\n    \"parentTicketId\": 3,\n    \"ticketLabel\": \"BUG\",\n    \"ticketPriority\": \"HIGH\",\n    \"ticketProgress\": \"TODO\",\n    \"deadline\": \"2024-10-31T00:00:00\",\n    \"reporterId\": 1,\n    \"assignedUserId\": 2,\n    \"projectId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/auth/ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "0302-Get Ticket By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/auth/project/:projectId/ticket",
+							"raw": "http://localhost:8080/api/auth/ticket/:ticketId",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"api",
 								"auth",
-								"project",
-								":projectId",
-								"ticket"
+								"ticket",
+								":ticketId"
 							],
 							"variable": [
 								{
-									"key": "projectId",
-									"value": ""
+									"key": "ticketId",
+									"value": "2"
 								}
 							]
 						}
@@ -204,7 +244,7 @@
 					"response": []
 				},
 				{
-					"name": "0302-Get All Tickets By Project",
+					"name": "0303-Get All Tickets By Project",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -232,7 +272,7 @@
 					"response": []
 				},
 				{
-					"name": "0303-Get Specific Ticket of Project",
+					"name": "0304-Get Specific Ticket of Project",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -265,32 +305,73 @@
 					"response": []
 				},
 				{
-					"name": "0304-Edit Ticket",
+					"name": "0305-Edit Ticket",
 					"request": {
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Ticket 2\",\n    \"description\": \"Another Ticket\",\n    \"parentTicketId\": 2,\n    \"ticketLabel\": \"BUG\",\n    \"ticketPriority\": \"HIGH\",\n    \"ticketProgress\": \"TODO\",\n    \"deadline\": \"2024-10-31T00:00:00\",\n    \"reporterId\": 1,\n    \"assignedUserId\": 2,\n    \"projectId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:8080/auth/project/:projectId/ticket/:ticketId",
+							"raw": "http://localhost:8080/api/auth/ticket/:ticketId",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
+								"api",
 								"auth",
-								"project",
-								":projectId",
 								"ticket",
 								":ticketId"
 							],
 							"variable": [
 								{
-									"key": "projectId",
-									"value": ""
-								},
-								{
 									"key": "ticketId",
-									"value": ""
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "0305-Add Ticket To Project",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Ticket\",\n    \"description\": \"Another Ticket\",\n    \"ticketLabel\": \"BUG\",\n    \"ticketPriority\": \"HIGH\",\n    \"ticketProgress\": \"TODO\",\n    \"deadline\": \"2024-10-29T00:00:00\",\n    \"reporterId\": 1,\n    \"assignedUserId\": 2,\n    \"projectId\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/:projectId/ticket",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								":projectId",
+								"ticket"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "2"
 								}
 							]
 						}
