@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -23,6 +24,9 @@ public class Comment {
 
     @Column
     private String body;
+
+    @Column
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "commenter_id")
