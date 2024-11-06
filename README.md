@@ -49,4 +49,8 @@ User Story: Assignee can send review request to Assigner after ticket completion
 2. Open Dialog Box to paste in Github Link.
 3. Send notification to assigner and add to assigner pending tasks.
 
+Engineer Story: Add Unit Tests
+1. Do Spring Boot API Testing using Mockito.
+2. Do React testing using Jest.
+
 
