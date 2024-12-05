@@ -1,22 +1,24 @@
 import { Link } from "react-router-dom";
+import Form from "../utils/Form/Form";
 
 const AuthenticationForm : React.FC<{isRegister : boolean}> = ({ isRegister }) => {
 
     return (
-        <form method="post">
-            <div className="form-controls">
+        <Form>
+            <Form.FormControls>
                 <label>Enter email</label>
                 <input type="email" required />
-            </div>
-            <div className="form-controls">
+            </Form.FormControls>
+            <Form.FormControls>
                 <label>Enter password</label>
                 <input type="password" required />
-            </div>
+            </Form.FormControls>
+            
             <button>{isRegister ? 'Register' : 'Login'}</button>
             <Link to={isRegister ? '/auth' : '?mode=register'}>
                 {isRegister ? 'Login' : 'Register New User'}
             </Link>
-        </form>
+        </Form>
     )
 
 }

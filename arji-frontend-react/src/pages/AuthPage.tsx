@@ -9,11 +9,11 @@ const LoginPage : React.FC = () => {
     const isRegister = searchParams.get('mode') === 'register';
 
     return (
-        <div>
-            <div>
-                Logo
+        <div className="auth-page">
+            <div className="auth-page__logo">
+                <h1>arji.</h1>
             </div>
-            <div>
+            <div className="auth-page__form">
                 <Card>
                     {!isRegister ? <h2>Login</h2> : <h2>Register</h2>}
                     <AuthenticationForm isRegister={isRegister} />

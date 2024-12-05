@@ -1,0 +1,19 @@
+.form-controls {
+    width: 100%;
+    /* background-color: green; */    
+}
+
+.form-controls > input {
+    display: block;
+    width: 100%;
+
+    font-size: 2rem;
+    padding: 0.5rem 0.5rem;
+
+    border-radius: 0.5rem;
+
+    outline: none;
+    border: none;
+
+    margin-bottom: 0.5rem;
+}

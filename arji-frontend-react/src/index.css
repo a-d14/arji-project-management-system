@@ -4,13 +4,15 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: black;
+  background-color: white;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  box-sizing: border-box;
 }
 
 *,
@@ -26,8 +28,35 @@ html {
 }
 
 body {
-  position: relative;
-  box-sizing: border-box;
   height: 100vh;
-};
+}
 
+#root {
+  height: inherit;
+}
+
+.auth-page {
+  height: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-page__logo {
+  flex: 0 0 50%;
+
+  font-size: 5rem;
+  background-color: gray;
+  height: inherit;
+
+  text-align: center;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-page__form {
+  flex: 0 0 50%;
+  padding: 0 15rem;
+}
