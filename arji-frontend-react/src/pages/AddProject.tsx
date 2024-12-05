@@ -1,4 +1,4 @@
-import Form from "../components/utils/Form/Form";
+import Form from "../components/utils/Card/Card";
 
 const AddProject = () => {
     return (
