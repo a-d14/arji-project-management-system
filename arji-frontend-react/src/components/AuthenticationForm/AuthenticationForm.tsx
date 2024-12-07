@@ -13,11 +13,12 @@ const AuthenticationForm : React.FC<{isRegister : boolean}> = ({ isRegister }) =
                 <label>Enter password</label>
                 <input type="password" required />
             </Form.FormControls>
-            
-            <button>{isRegister ? 'Register' : 'Login'}</button>
-            <Link to={isRegister ? '/auth' : '?mode=register'}>
-                {isRegister ? 'Login' : 'Register New User'}
-            </Link>
+            <div className="">
+                <button>{isRegister ? 'Register' : 'Login'}</button>
+                <Link to={isRegister ? '/auth' : '?mode=register'}>
+                    {isRegister ? 'Login' : 'Register New User'}
+                </Link>
+            </div>
         </Form>
     )
 
