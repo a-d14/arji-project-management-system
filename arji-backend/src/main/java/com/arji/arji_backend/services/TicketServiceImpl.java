@@ -13,7 +13,7 @@ import com.arji.arji_backend.repositories.TicketRepository;
 import com.arji.arji_backend.repositories.UserRepository;
 import com.arji.arji_backend.util.ProjectDetails;
 import com.arji.arji_backend.util.TicketDetails;
-import com.arji.arji_backend.util.UserDetails;
+import com.arji.arji_backend.util.UserInfo;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,8 +94,8 @@ public class TicketServiceImpl implements TicketService {
                 .orElseThrow(() -> new ResourceNotFoundException("Ticket", "ticketId", ticketId));
         TicketDetailsView ticketDetailsView = modelMapper.map(ticket, TicketDetailsView.class);
         ticketDetailsView.setParent(ticket.getParent() != null ? new TicketDetails(ticket.getParent().getTicketId(), ticket.getParent().getTitle()) : null);
-        ticketDetailsView.setReporter(new UserDetails(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
-        ticketDetailsView.setAssignedUser(new UserDetails(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
+        ticketDetailsView.setReporter(new UserInfo(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
+        ticketDetailsView.setAssignedUser(new UserInfo(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
         ticketDetailsView.setProject(new ProjectDetails(ticket.getProject().getProjectId(), ticket.getProject().getTitle()));
         ticketDetailsView.setChildren(
                 ticket.getChildren().stream().map(t -> new TicketDetails(t.getTicketId(), t.getTitle())).toList()
@@ -164,8 +164,8 @@ public class TicketServiceImpl implements TicketService {
 
         TicketDetailsView ticketDetailsView = modelMapper.map(ticket, TicketDetailsView.class);
         ticketDetailsView.setParent(ticket.getParent() != null ? new TicketDetails(ticket.getParent().getTicketId(), ticket.getParent().getTitle()) : null);
-        ticketDetailsView.setReporter(new UserDetails(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
-        ticketDetailsView.setAssignedUser(new UserDetails(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
+        ticketDetailsView.setReporter(new UserInfo(ticket.getReporter().getId(), ticket.getReporter().getFirstName() + " " + ticket.getReporter().getLastName()));
+        ticketDetailsView.setAssignedUser(new UserInfo(ticket.getAssignedUser().getId(), ticket.getAssignedUser().getFirstName() + " " + ticket.getAssignedUser().getLastName()));
         ticketDetailsView.setProject(new ProjectDetails(ticket.getProject().getProjectId(), ticket.getProject().getTitle()));
         ticketDetailsView.setChildren(
                 ticket.getChildren().stream().map(t -> new TicketDetails(t.getTicketId(), t.getTitle())).toList()

@@ -1,7 +1,7 @@
 package com.arji.arji_backend.payload.project;
 
 import com.arji.arji_backend.util.TicketDetails;
-import com.arji.arji_backend.util.UserDetails;
+import com.arji.arji_backend.util.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +18,8 @@ public class ProjectDetailsView {
     private String description;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private UserDetails manager;
-    private List<UserDetails> personnelReadOnly;
-    private List<UserDetails> personnelEditAccess;
+    private UserInfo manager;
+    private List<UserInfo> personnelReadOnly;
+    private List<UserInfo> personnelEditAccess;
     private List<TicketDetails> tickets;
 }

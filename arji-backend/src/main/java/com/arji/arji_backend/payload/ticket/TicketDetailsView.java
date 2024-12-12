@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +23,6 @@ public class TicketDetailsView {
     private LocalDateTime createdAt;
     private LocalDateTime deadline;
     private ProjectDetails project;
-    private UserDetails reporter;
-    private UserDetails assignedUser;
+    private UserInfo reporter;
+    private UserInfo assignedUser;
 }

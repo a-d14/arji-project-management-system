@@ -1,7 +1,7 @@
 package com.arji.arji_backend.payload.ticket;
 
 import com.arji.arji_backend.util.ProjectDetails;
-import com.arji.arji_backend.util.UserDetails;
+import com.arji.arji_backend.util.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,5 +17,5 @@ public class TicketListView {
     private ProjectDetails projectDetails;
     private LocalDateTime createdAt;
     private LocalDateTime deadline;
-    private UserDetails assignedUser;
+    private UserInfo assignedUser;
 }

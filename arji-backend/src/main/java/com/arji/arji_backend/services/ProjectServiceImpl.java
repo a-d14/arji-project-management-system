@@ -11,7 +11,7 @@ import com.arji.arji_backend.payload.project.ProjectListView;
 import com.arji.arji_backend.repositories.ProjectRepository;
 import com.arji.arji_backend.repositories.UserRepository;
 import com.arji.arji_backend.util.TicketDetails;
-import com.arji.arji_backend.util.UserDetails;
+import com.arji.arji_backend.util.UserInfo;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class ProjectServiceImpl implements ProjectService{
 
         List<ProjectListView> projects = allProjects.stream().map((project) -> {
             ProjectListView projectListView = modelMapper.map(project, ProjectListView.class);
-            projectListView.setManagerDetails(new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName()));
+            projectListView.setManagerDetails(new UserInfo(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName()));
             return projectListView;
         }).toList();
 
@@ -75,13 +75,13 @@ public class ProjectServiceImpl implements ProjectService{
         Project project = projectRepository.findById(projectId).orElseThrow(() -> new ResourceNotFoundException("Project", "projectId", projectId));
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setManager(
-                project.getManager() == null ? null : new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
+                project.getManager() == null ? null : new UserInfo(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
         );
         projectDetailsView.setPersonnelReadOnly(
-                project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelReadOnly().stream().map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         projectDetailsView.setPersonnelEditAccess(
-                project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelEditAccess().stream().map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         projectDetailsView.setTickets(
                 project.getTickets().stream().map(ticket -> new TicketDetails(ticket.getTicketId(), ticket.getTitle())).toList()
@@ -133,13 +133,13 @@ public class ProjectServiceImpl implements ProjectService{
 
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setManager(
-                new UserDetails(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
+                new UserInfo(project.getManager().getId(), project.getManager().getFirstName() + " " + project.getManager().getLastName())
         );
         projectDetailsView.setPersonnelReadOnly(
-                project.getPersonnelReadOnly().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelReadOnly().stream().map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         projectDetailsView.setPersonnelEditAccess(
-                project.getPersonnelEditAccess().stream().map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
+                project.getPersonnelEditAccess().stream().map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList()
         );
         return projectDetailsView;
     }
@@ -185,9 +185,9 @@ public class ProjectServiceImpl implements ProjectService{
 
         ProjectDetailsView projectDetailsView = modelMapper.map(project, ProjectDetailsView.class);
         projectDetailsView.setPersonnelEditAccess(personnelEditAccessNew.stream()
-                .map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
+                .map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
         projectDetailsView.setPersonnelReadOnly(personnelReadOnlyNew.stream()
-                .map(user -> new UserDetails(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
+                .map(user -> new UserInfo(user.getId(), user.getFirstName() + " " + user.getLastName())).toList());
 
         return projectDetailsView;
     }
