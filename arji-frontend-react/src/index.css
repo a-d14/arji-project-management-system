@@ -29,10 +29,15 @@ html {
 
 body {
   height: 100vh;
+  font-size: 1.2rem;
 }
 
 #root {
   height: inherit;
+}
+
+h2 {
+  font-size: 2.5rem;
 }
 
 .auth-page {

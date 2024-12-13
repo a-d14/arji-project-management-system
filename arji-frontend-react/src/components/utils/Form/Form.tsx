@@ -1,20 +1,23 @@
 import React from "react";
 
-import styles from './Form.module.css';
 import FormControlComponent from "./FormControlComponent";
+import FormSubmitButton from "./FormSubmitButton";
 
-interface FormComponent extends React.FC<{children : React.ReactNode | JSX.Element | JSX.Element[]}> {
+
+interface FormComponent extends React.FC<{children : React.ReactNode | JSX.Element | JSX.Element[], onSubmit : React.FormEventHandler}> {
     FormControls : typeof FormControlComponent;
+    FormButton: typeof FormSubmitButton;
 }
 
-const Form : FormComponent = ({children}) => {
+const Form : FormComponent = ({children, onSubmit}) => {
     return (
-        <form method="post" className={styles['form-container']}>
+        <form onSubmit={onSubmit}>
             {children}
         </form>
     )
 }
 
 Form.FormControls = FormControlComponent;
+Form.FormButton = FormSubmitButton;
 
 export default Form;
