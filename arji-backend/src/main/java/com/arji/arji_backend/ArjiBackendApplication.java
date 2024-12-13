@@ -10,6 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,9 @@ public class ArjiBackendApplication {
 
 	@Autowired
 	private RoleRepository roleRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ArjiBackendApplication.class, args);
@@ -54,6 +58,7 @@ public class ArjiBackendApplication {
 			user1.setLastName("Dasgupta");
 			user1.setEmail("a@b.com");
 			user1.setUsername("aakash");
+			user1.setPassword(passwordEncoder.encode("abc"));
 			user1.setCreatedAt(LocalDateTime.now());
 			user1.setAuthorities(List.of(admin));
 
@@ -64,6 +69,7 @@ public class ArjiBackendApplication {
 			user2.setLastName("Dasgupta");
 			user2.setEmail("b@c.com");
 			user2.setUsername("asmi");
+			user2.setPassword(passwordEncoder.encode("abc"));
 			user2.setCreatedAt(LocalDateTime.now());
 			user2.setAuthorities(List.of(manager));
 
@@ -74,6 +80,7 @@ public class ArjiBackendApplication {
 			user3.setLastName("Dasgupta");
 			user3.setEmail("c@d.com");
 			user3.setUsername("sumit");
+			user3.setPassword(passwordEncoder.encode("abc"));
 			user3.setCreatedAt(LocalDateTime.now());
 			user3.setAuthorities(List.of(developer));
 
@@ -84,6 +91,7 @@ public class ArjiBackendApplication {
 			user4.setLastName("Dasgupta");
 			user4.setEmail("d@e.com");
 			user4.setUsername("kuheli");
+			user4.setPassword(passwordEncoder.encode("abc"));
 			user4.setCreatedAt(LocalDateTime.now());
 			user4.setAuthorities(List.of(developer));
 

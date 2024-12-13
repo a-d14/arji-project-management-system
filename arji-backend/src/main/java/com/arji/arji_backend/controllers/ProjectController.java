@@ -19,7 +19,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping("/auth/project")
+    @GetMapping("/project")
     public ResponseEntity<ProjectListDTO> getAllProjects(
             @RequestParam(name = "pageNumber", defaultValue = "0") int pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "2") int pageSize
