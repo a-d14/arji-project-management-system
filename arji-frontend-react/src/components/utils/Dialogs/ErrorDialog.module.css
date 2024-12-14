@@ -1,0 +1,8 @@
+.error {
+    width: 100%;
+    background-color: red;
+    color: yellow;
+    border-radius: .5rem;
+    padding: 1% 2%;
+    margin: 1rem 0;
+}

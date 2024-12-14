@@ -1,5 +1,16 @@
+import { useLocation } from "react-router-dom";
+
 const HomePage : React.FC = () => {
-    return <h1>Home Page</h1>
+
+    const location = useLocation();
+
+    // console.log(location.state);
+
+    return (
+        <>
+            <h1>Hello {location.state.username}</h1>
+        </>
+    )
 }
 
 export default HomePage;

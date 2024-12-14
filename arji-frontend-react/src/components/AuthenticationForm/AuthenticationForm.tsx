@@ -4,22 +4,17 @@ import FormSubmitButton from "../utils/Form/FormSubmitButton";
 
 import styles from './AuthenticationForm.module.css';
 
-const AuthenticationForm : React.FC<{isRegister : boolean}> = ({ isRegister }) => {
-
-    function onSubmit(e) {
-        e.preventDefault();
-
-        const fd = new FormData(e.target);
-        console.log(fd);
-
-        // e.target.reset();
-    }
+const AuthenticationForm : React.FC<{isRegister : boolean}> = ({ isRegister, onSubmit }) => {
 
     return (
         <Form onSubmit={onSubmit}>
-            <Form.FormControls>
+            {isRegister && <Form.FormControls>
                 <label>Enter email</label>
                 <input name="email" type="email" required />
+            </Form.FormControls>}
+            <Form.FormControls>
+                <label>Enter username</label>
+                <input name="username" type="text" required />
             </Form.FormControls>
             <Form.FormControls>
                 <label>Enter password</label>
