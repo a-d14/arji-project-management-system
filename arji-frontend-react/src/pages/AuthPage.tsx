@@ -1,12 +1,17 @@
 import { useState } from "react";
+import { useDispatch } from 'react-redux';
+
 import AuthenticationForm from "../components/AuthenticationForm/AuthenticationForm";
 import Card from "../components/utils/Card/Card";
 import { login } from '../http.js';
+import { authActions } from '../store/index.js';
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 import ErrorDialog from "../components/utils/Dialogs/ErrorDialog.js";
 
 const LoginPage : React.FC = () => {
+
+    const dispatch = useDispatch();
 
     const [searchParams] = useSearchParams();
     const isRegister = searchParams.get('mode') === 'register';
@@ -25,7 +30,7 @@ const LoginPage : React.FC = () => {
         let response;
 
         if(isRegister) {
-            
+
         } else {
             response = await login(formDataObject);
         }
@@ -40,7 +45,9 @@ const LoginPage : React.FC = () => {
 
         const data = await response.json();
 
-        navigate("/", {state : data});
+        dispatch(authActions.login(data));
+
+        navigate("/");
 
         // console.log(data);
     }
