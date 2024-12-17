@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: black;
+  color: black;  
   background-color: white;
 
   font-synthesis: none;
@@ -64,4 +64,31 @@ h2 {
 .auth-page__form {
   flex: 0 0 50%;
   padding: 0 15rem;
+}
+
+/* HOME PAGE STYLES */
+
+.home-page {
+  display: flex;
+}
+
+.sidebar {
+  font-size: 2rem;
+  padding: 2% 3%;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-details {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.menu {
+  list-style-type: none;
+}
+
+.page-content {
+  padding: 2% 3%;
 }
